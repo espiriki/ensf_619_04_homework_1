@@ -148,10 +148,10 @@ if __name__ == '__main__':
 
         epoch_count = epoch_count + 1
 
-        if args.model == 'mlp' and test_acc > 0.97:
+        if args.model == 'mlp' and test_acc > 0.80:
             break
 
-        if args.model == 'cnn' and test_acc > 0.99:
+        if args.model == 'cnn' and test_acc > 0.85:
             break
 
     # Test inference after completion of training
@@ -182,9 +182,9 @@ if __name__ == '__main__':
     plt.plot(range(len(train_loss)), train_loss, color='r')
     plt.ylabel('Training loss')
     plt.xlabel('Communication Rounds')
-    plt.savefig('save/fed_{}_{}_{}_C[{}]_iid[{}]_E[{}]_B[{}]_loss.png'.
+    plt.savefig('save/fed_{}_{}_{}_C[{}]_iid[{}]_E[{}]_B[{}]_LR[{}]_loss.png'.
                 format(args.dataset, args.model, args.epochs, args.frac,
-                       args.iid, args.local_ep, args.local_bs))
+                       args.iid, args.local_ep, args.local_bs, args.lr))
     
     # Plot Average Accuracy vs Communication rounds
     plt.figure()
@@ -192,6 +192,6 @@ if __name__ == '__main__':
     plt.plot(range(len(train_accuracy)), train_accuracy, color='k')
     plt.ylabel('Average Accuracy')
     plt.xlabel('Communication Rounds')
-    plt.savefig('save/fed_{}_{}_{}_C[{}]_iid[{}]_E[{}]_B[{}]_acc.png'.
+    plt.savefig('save/fed_{}_{}_{}_C[{}]_iid[{}]_E[{}]_B[{}]_LR[{}]_acc.png'.
                 format(args.dataset, args.model, args.epochs, args.frac,
-                       args.iid, args.local_ep, args.local_bs))
+                       args.iid, args.local_ep, args.local_bs, args.lr))

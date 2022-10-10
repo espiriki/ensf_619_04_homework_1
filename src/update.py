@@ -49,8 +49,6 @@ class LocalUpdate(object):
         else:
             bs = self.args.local_bs
 
-        print("Local Batch Size {}".format(bs))
-
         trainloader = DataLoader(DatasetSplit(dataset, idxs_train),
                                  batch_size=bs, shuffle=True)
         validloader = DataLoader(DatasetSplit(dataset, idxs_val),
