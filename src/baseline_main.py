@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from utils import get_dataset
 from options import args_parser
 from update import test_inference
-from models import MLP, CNNMnist, CNNFashion_Mnist, CNNCifar
+from models import MLP, CNNMnist
 from torchsummary import summary
 
 def print_summary(model):
@@ -20,7 +20,7 @@ def print_summary(model):
     trainloader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 
     for _, (image, _) in enumerate(trainloader):
-        summary(global_model, image)
+        summary(model, image)
         break
 
 if __name__ == '__main__':
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         optimizer = torch.optim.Adam(global_model.parameters(), lr=args.lr,
                                      weight_decay=1e-4)
 
-    trainloader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+    trainloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     criterion = torch.nn.NLLLoss().to(device)
     epoch_loss = []
 
