@@ -10,37 +10,51 @@ class MLP(nn.Module):
     def __init__(self, dim_in, dim_hidden, dim_out):
         super(MLP, self).__init__()
         self.layer_input = nn.Linear(dim_in, dim_hidden)
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout()
-        self.layer_hidden = nn.Linear(dim_hidden, dim_out)
+        self.relu_1 = nn.ReLU()
+        self.layer_hidden_1 = nn.Linear(dim_hidden, dim_hidden)
+        self.relu_2 = nn.ReLU()
+        self.layer_hidden_2 = nn.Linear(dim_hidden, dim_out)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         x = x.view(-1, x.shape[1]*x.shape[-2]*x.shape[-1])
         x = self.layer_input(x)
-        x = self.dropout(x)
-        x = self.relu(x)
-        x = self.layer_hidden(x)
+        x = self.relu_1(x)
+        x = self.layer_hidden_1(x)
+        x = self.relu_2(x)
+        x = self.layer_hidden_2(x)
         return self.softmax(x)
 
 
 class CNNMnist(nn.Module):
     def __init__(self, args):
         super(CNNMnist, self).__init__()
-        self.conv1 = nn.Conv2d(args.num_channels, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.conv2_drop = nn.Dropout2d()
-        self.fc1 = nn.Linear(320, 50)
-        self.fc2 = nn.Linear(50, args.num_classes)
+        self.conv1 = nn.Conv2d(args.num_channels, 32, kernel_size=5, padding=2)
+        self.relu1 = nn.ReLU()
+        self.max_pool1 = nn.MaxPool2d(kernel_size=2)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=5, padding=2)
+        self.relu2 = nn.ReLU()
+        self.max_pool2 = nn.MaxPool2d(kernel_size=2)
+
+        # At this point the shape of output of the convolutional layers
+        # is 7,7,64=3164 neurons (7x7 image, 64 channels, since the input size is 28x28 and
+        # it went through two maxpool layers, so halfing the size two times, from 28x28 to
+        # 14x14 to 7x7)
+        # The paper states that the first FC layer has 512 neurons
+        self.fc1 = nn.Linear(3136, 512)
+        self.fc2 = nn.Linear(512, args.num_classes)
+        self.relu = nn.ReLU()
+        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+        x = self.max_pool1(self.conv1(x))
+        x = self.max_pool2(self.conv2(x))
         x = x.view(-1, x.shape[1]*x.shape[2]*x.shape[3])
-        x = F.relu(self.fc1(x))
-        x = F.dropout(x, training=self.training)
+
+        x = self.fc1(x)
         x = self.fc2(x)
-        return F.log_softmax(x, dim=1)
+        x = self.relu(x)
+        return self.softmax(x)
 
 
 class CNNFashion_Mnist(nn.Module):
