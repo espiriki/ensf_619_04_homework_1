@@ -149,7 +149,7 @@ if __name__ == '__main__':
         if args.model == 'mlp' and test_acc > 0.92:
             break
 
-        if args.model == 'cnn' and test_acc > 0.90:
+        if args.model == 'cnn' and test_acc > 0.94:
             break
 
     print(f' \n Results after {epoch_count} global rounds of training:')
